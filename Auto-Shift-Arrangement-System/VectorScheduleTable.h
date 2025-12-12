@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 class VectorScheduleTable : public IScheduleTable {
 private:
     vector<vector<int>> schedule; // rows = staff, columns = days

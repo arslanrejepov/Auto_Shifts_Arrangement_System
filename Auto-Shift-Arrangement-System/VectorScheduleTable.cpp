@@ -1,22 +1,22 @@
 #include "VectorScheduleTable.h"
 
-using namespace std; 
-
-
 // Initialize the schedule with all zeros
 void VectorScheduleTable::initialize(int staffCount, int dayCount) {
     schedule = vector<vector<int>>(staffCount, vector<int>(dayCount, 0));
 }
 
-// Assign a staff member to work on a specific day
 void VectorScheduleTable::assign(int staffID, int dayID) {
-    schedule[staffID][dayID] = 1;
+    if (staffID >= 0 && staffID < schedule.size() && dayID >= 0 && dayID < schedule[0].size()) {
+        schedule[staffID][dayID] = 1;
+    }
 }
 
-// Unassign a staff member from a specific day
 void VectorScheduleTable::unassign(int staffID, int dayID) {
-    schedule[staffID][dayID] = 0;
+    if (staffID >= 0 && staffID < schedule.size() && dayID >= 0 && dayID < schedule[0].size()) {
+        schedule[staffID][dayID] = 0;
+    }
 }
+
 
 // Check if a staff member is assigned to work on a specific day
 bool VectorScheduleTable::isAssigned(int staffID, int dayID) const {
@@ -47,4 +47,3 @@ void VectorScheduleTable::print() const {
         cout << endl;
     }
 }
-

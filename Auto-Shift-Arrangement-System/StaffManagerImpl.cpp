@@ -37,8 +37,13 @@ int StaffManagerImpl::getOffDays(int staffID) const {
     if (!inStaffRange(staffID)) return 0;
     return offDays[staffID];
 }
-
+ 
 bool StaffManagerImpl::canWork(int staffID, int remainingDays) const {
-    if (!inStaffRange(staffID)) return false;
-    return offDays[staffID] + remainingDays >= minOffDays;
+    if (!inStaffRange(staffID)) return false;  // Ensure staffID is valid
+
+    int workedDays = workDays[staffID];  // Get the current number of worked days
+    int maxWorkDays = dayCount - minOffDays;  // The maximum number of workdays this staff member can have
+
+    // Ensure that this staff member does not exceed the max work days
+    return (workedDays + remainingDays) <= maxWorkDays;
 }
