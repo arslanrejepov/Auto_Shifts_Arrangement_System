@@ -3,10 +3,10 @@
 StaffManagerImpl::StaffManagerImpl(): staffCount(0), dayCount(0), minOffDays(0) {}
 
 // Set up internal arrays for a new schedule
-void StaffManagerImpl::initialize(int staffCount_, int dayCount_, int minOffDays_) {
-    staffCount  = staffCount_;
-    dayCount    = dayCount_;
-    minOffDays  = minOffDays_;
+void StaffManagerImpl::initialize(int staffCount, int dayCount, int minOffDays) {
+    this->staffCount  = staffCount;
+    this->dayCount    = dayCount;
+    this->minOffDays  = minOffDays;
 
     workDays.assign(staffCount, 0);
     offDays.assign(staffCount, 0);
