@@ -2,26 +2,13 @@
 
 using namespace std;
 
-void GreedyShiftScheduler::setStaffCount(int m) {
-    staffCount = m;
-}
-
-void GreedyShiftScheduler::setDayCount(int n) {
-    dayCount = n;
-}
-
-void GreedyShiftScheduler::setMinimumDaysOff(int k) {
-    minOffDays = k;
-}
-
-void GreedyShiftScheduler::setDailyRequirements(const int& requirements) {
-    dailyRequirements = requirements; // <=0 means auto-calc
-}
+void GreedyShiftScheduler::setStaffCount(int m) {staffCount = m;}
+void GreedyShiftScheduler::setDayCount(int n) {dayCount = n;}
+void GreedyShiftScheduler::setMinimumDaysOff(int k) {minOffDays = k;}
+void GreedyShiftScheduler::setDailyRequirements(const int& requirements) {dailyRequirements = requirements; }
 
 // Auto-calc only when user didn't provide dailyRequirements
 void GreedyShiftScheduler::calculateDailyRequirements() {
-    if (dailyRequirements > 0) return;
-
     if (staffCount <= 0 || dayCount <= 0) {
         dailyRequirements = 0;
         return;
@@ -37,7 +24,6 @@ void GreedyShiftScheduler::calculateDailyRequirements() {
 void GreedyShiftScheduler::generateSchedule(IScheduleTable& schedule) {
     // Reset “query after generation” state
     schedulePtr = nullptr;
-    available.clear();
 
     calculateDailyRequirements();
 
