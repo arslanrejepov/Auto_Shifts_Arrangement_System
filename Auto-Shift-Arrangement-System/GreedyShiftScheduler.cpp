@@ -1,7 +1,5 @@
 #include "GreedyShiftScheduler.h"
 #include <iostream>
-#include <numeric>
-#include <algorithm>
 #include <queue>  // for priority_queue
 
 using namespace std;
@@ -33,10 +31,6 @@ void GreedyShiftScheduler::calculateDailyRequirements() {
         dailyRequirements[d] = base + (d < rem ? 1 : 0);
     }
 
-    for (int d = 0; d < dayCount; ++d) {
-        if (dailyRequirements[d] > staffCount) dailyRequirements[d] = staffCount;
-        if (dailyRequirements[d] < 0) dailyRequirements[d] = 0;
-    }
 }
 
 void GreedyShiftScheduler::generateSchedule(VectorScheduleTable& schedule) {
@@ -97,18 +91,7 @@ void GreedyShiftScheduler::generateSchedule(VectorScheduleTable& schedule) {
             }
         }
 
-        for (int s = 0; s < staffCount && assigned < need; ++s) {
-            if (!schedule.isAssigned(s, day) && worked[s] < maxWorkDays) {
-                schedule.assign(s, day);
-                worked[s]++;
-                assigned++;
-            }
-        }
 
-        if (assigned < need) {
-            cout << "Failed to meet requirement on day " << day + 1 << ".\n";
-            return;
-        }
     }
 
     cout << "Daily Requirements: ";

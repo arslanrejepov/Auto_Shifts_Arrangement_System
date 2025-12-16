@@ -23,10 +23,12 @@ private:
 
     struct StaffCompare {
         bool operator()(const StaffNode& a, const StaffNode& b) const {
-            if (a.worked != b.worked)
-                return a.worked > b.worked;      // fewer worked first
-            return a.remaining < b.remaining;    // more remaining first
-        }
+        if (a.worked != b.worked)
+            return a.worked > b.worked;        // fewer worked first
+        if (a.remaining != b.remaining)
+            return a.remaining < b.remaining;  // more remaining first
+        return a.id > b.id;                    // smaller id first (tie-break)
+    }
     };
 
     // ---------------- Internal helpers ----------------
