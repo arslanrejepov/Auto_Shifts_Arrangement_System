@@ -1,11 +1,39 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <limits>
+
 #include "VectorScheduleTable.h"
 #include "GreedyShiftScheduler.h"
 #include "StaffManagerImpl.h"
 
 using namespace std;
+
+/* ---------- INPUT VALIDATION HELPERS ---------- */
+
+int readPositiveInt(const string& prompt) {
+    int x;
+    while (true) {
+        cout << prompt;
+        if (cin >> x && x > 0) return x;
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+int readIntLessThan(const string& prompt, int upperExclusive) {
+    int x;
+    while (true) {
+        cout << prompt;
+        if (cin >> x && x >= 0 && x < upperExclusive) return x;
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+/* ---------- PRINT HELPERS ---------- */
 
 void printSummary(const IStaffManager& mgr, int staffCount) {
     cout << "\nStaff Summary (work/off):\n";
@@ -36,14 +64,21 @@ int autoAssignExtra(
     return s;
 }
 
+/* ---------- MAIN ---------- */
+
 int main() {
-    int staffCount, dayCount, minOffDays;
-    cout << "Enter number of staff: ";
-    cin >> staffCount;
-    cout << "Enter number of days: ";
-    cin >> dayCount;
-    cout << "Enter minimum days off: ";
-    cin >> minOffDays;
+    int staffCount = readPositiveInt(
+        "Input the number of working staff (positive integer): "
+    );
+
+    int dayCount = readPositiveInt(
+        "Input the number of days (positive integer): "
+    );
+
+    int minOffDays = readIntLessThan(
+        "Input the number of leave days per each staff member (must be less than total days): ",
+        dayCount
+    );
 
     VectorScheduleTable schedule;
     StaffManagerImpl staffMgr;
@@ -63,6 +98,13 @@ int main() {
         int day;
         cout << "\nDay (1.." << dayCount << ", 0=exit): ";
         cin >> day;
+
+        if (!cin || day < 0 || day > dayCount) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+
         if (day == 0) break;
         int d = day - 1;
 
@@ -70,11 +112,18 @@ int main() {
         int op;
         cin >> op;
 
+        if (!cin || (op != 1 && op != 2)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+
         if (op == 1) {
             int s = autoAssignExtra(schedule, staffMgr, staffCount, d);
             if (s == -1) cout << "No available staff.\n";
             else cout << "Auto-assigned Staff " << s + 1 << "\n";
-        } else {
+        }
+        else {
             vector<int> working;
             cout << "Working staff:\n";
             for (int s = 0; s < staffCount; ++s)
@@ -82,22 +131,34 @@ int main() {
                     cout << s + 1 << " ";
                     working.push_back(s);
                 }
-            cout << "\nPick staff: ";
-            int pick; cin >> pick; pick--;
 
-            if (find(working.begin(), working.end(), pick) != working.end()) {
+            cout << "\nPick staff: ";
+            int pick;
+            cin >> pick;
+            pick--;
+
+            if (cin && find(working.begin(), working.end(), pick) != working.end()) {
                 schedule.unassign(pick, d);
                 staffMgr.removeWorkDay(pick);
                 staffMgr.addOffDay(pick);
+            }
+            else {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
         }
 
         schedule.print();
         printSummary(staffMgr, staffCount);
     }
+
     double rate;
     cout << "\nEnter daily salary rate: ";
-    cin >> rate;
+    while (!(cin >> rate) || rate < 0) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Enter daily salary rate: ";
+    }
 
     cout << "\nStaff Salaries:\n";
     for (int s = 0; s < staffCount; ++s)
