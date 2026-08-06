@@ -1,52 +1,79 @@
-# app.py
-from flask import Flask, render_template, request
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 import subprocess
 import json
 import os
 
-app = Flask(__name__)
+app = FastAPI()
 
-# Path to your compiled C++ executable
-# IF ON WINDOWS, USE 'core\\prog.exe'
-# IF ON MAC/LINUX, USE './core/prog'
-EXECUTABLE_PATH = os.path.join('core', 'prog.exe') 
+templates = Jinja2Templates(directory="templates")
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+# Path to C++ executable
+EXECUTABLE_PATH = os.path.join("core", "prog.exe")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "data": None
+        }
+    )
+
+
+@app.post("/", response_class=HTMLResponse)
+async def generate_schedule(
+    request: Request,
+    staff_count: str = Form(...),
+    day_count: str = Form(...),
+    min_off: str = Form(...),
+    rate: str = Form(...)
+):
     data = None
-    
-    if request.method == 'POST':
-        # 1. Get data from HTML form
-        staff_count = request.form.get('staff_count')
-        day_count = request.form.get('day_count')
-        min_off = request.form.get('min_off')
-        rate = request.form.get('rate')
 
-        # 2. Run the C++ program silently
-        try:
-            result = subprocess.run(
-                [EXECUTABLE_PATH, staff_count, day_count, min_off, rate],
-                capture_output=True,
-                text=True,
-                check=True
+    try:
+        result = subprocess.run(
+            [
+                EXECUTABLE_PATH,
+                staff_count,
+                day_count,
+                min_off,
+                rate
+            ],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        output = result.stdout
+
+        start_marker = "---JSON_START---"
+        end_marker = "---JSON_END---"
+
+        if start_marker in output and end_marker in output:
+            json_str = (
+                output
+                .split(start_marker)[1]
+                .split(end_marker)[0]
             )
-            
-            # 3. Extract the JSON part from C++ output
-            output = result.stdout
-            start_marker = "---JSON_START---"
-            end_marker = "---JSON_END---"
-            
-            if start_marker in output and end_marker in output:
-                json_str = output.split(start_marker)[1].split(end_marker)[0]
-                data = json.loads(json_str)
-            else:
-                print("Error: Could not find JSON in C++ output")
-                print(output) # Debugging
 
-        except Exception as e:
-            print(f"Error running C++: {e}")
+            data = json.loads(json_str)
 
-    return render_template('index.html', data=data)
+        else:
+            print("JSON data not found")
+            print(output)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    except Exception as e:
+        print(f"C++ Error: {e}")
+
+
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "data": data
+        }
+    )
