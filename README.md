@@ -56,7 +56,7 @@ pip install requirements.txt
 ```
 g++ core/main.cpp core/GreedyShiftScheduler.cpp core/StaffManagerImpl.cpp core VectorScheduleTable.cpp -o core/prog.exe
 
-python app.py
+uvicorn app:app --reload
 
 ```
 
