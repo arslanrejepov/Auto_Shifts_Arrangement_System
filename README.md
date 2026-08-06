@@ -9,11 +9,11 @@ The **Auto-Shift Arrangement System** was designed and built as a final project 
 
 It demonstrates the practical application of advanced data structures (Heaps, Priority Queues, Vectors) to solve real-world scheduling problems. The system utilizes a **Greedy Algorithm** in C++ to calculate optimal shift distributions, ensuring fair workload balance and meeting daily staffing requirements.
 
-To make the system accessible, we built a modern web interface using **Python (Flask)**, allowing managers to input constraints and view generated schedules in a dashboard without touching the command line.
+To make the system accessible, we built a modern web interface using **Python (FastAPI)**, allowing managers to input constraints and view generated schedules through a fast API-powered dashboard without touching the command line.  
 
 ## 🚀 Key Features
 * **Algorithmic Core:** Custom C++ greedy strategy to prioritize staff with the fewest hours.
-* **Web Interface:** Clean HTML/CSS frontend connected via Python Flask.
+* **Web Interface:** Clean HTML/CSS frontend connected via Python FastAPI.
 * **Smart Constraints:** Handles minimum staff per day, maximum working days, and mandatory off-days.
 * **Salary Calculation:** Automatically computes total payout based on daily rates.
 
@@ -36,7 +36,7 @@ ShiftSchedulerWeb/
 ├── templates/             # HTML Views
 │   └── index.html
 │
-├── app.py                 # Python Web Server (The Bridge)
+├── app.py                 # FastAPI Web Server (The Bridge)
 ├── .gitignore             # Git configuration
 └── README.md              # Project Documentation
 ```
